@@ -8,14 +8,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize build space
+      - name: Free disk space manually
+        run: |
+          echo "Space before cleanup:"
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo docker image prune --all --force
+          sudo docker builder prune -a --force
+          echo "Space after cleanup:"
+          df -h
+
+      - name: Maximize build space  
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 512
+          root-reserve-mb: 1024
           swap-size-mb: 1024
           remove-dotnet: 'true'
-          remove-android: 'true'
+          remove-android: 'true' 
           remove-haskell: 'true'
+          remove-codeql: 'true'
           
       - name: Check available space
         run: df -h
@@ -39,7 +54,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/qwen-image-edit:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/qwen-image-edit:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/your-image-name:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/your-image-name:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
