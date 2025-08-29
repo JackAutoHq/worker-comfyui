@@ -21,16 +21,6 @@ jobs:
           sudo docker builder prune -a --force
           echo "Space after cleanup:"
           df -h
-
-      - name: Maximize build space  
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 1024
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-          remove-android: 'true' 
-          remove-haskell: 'true'
-          remove-codeql: 'true'
           
       - name: Check available space
         run: df -h
